@@ -3,6 +3,8 @@
 **Component Prototype: Daily Booking-Assistance Follow-up for Recent Unbooked Leads**  
 *Single-page, self-contained HTML application with zero external dependencies.*
 
+🔗 **Live Interactive App:** [https://goelnimish.github.io/booking-followup-tracker/](https://goelnimish.github.io/booking-followup-tracker/)
+
 ---
 
 ## 1. Executive Summary & Business Decision
@@ -82,5 +84,5 @@ The prototype evaluates example leads against four proposed pilot defaults:
 ## 5. Delivery and Verification
 
 - **Offline Independence**: The implementation in `Booking_Followup_Tracker.html` is completely standalone with vanilla HTML5, CSS3, and ES6 JavaScript. It has no external font, CDN, or stylesheet dependencies.
-- **Hosting**: `index.html` is the same page and is ready to use as the entry point for a static host. The reviewer can open `Booking_Followup_Tracker.html` directly; the live URL can be added after deployment.
-- **Checks**: Run `node verify_tracker.cjs` for the dependency-free logic and safety regression checks. See `TEST_RECORD.md` for what was checked and what still needs a manual browser pass.
+- **Live Demo & Hosting**: Hosted on GitHub Pages via `index.html` at [https://goelnimish.github.io/booking-followup-tracker/](https://goelnimish.github.io/booking-followup-tracker/). Reviewers can also open `Booking_Followup_Tracker.html` locally without an internet connection.
+- **Repository**: [https://github.com/goelnimish/booking-followup-tracker](https://github.com/goelnimish/booking-followup-tracker)
