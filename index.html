@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrightChamps · Booking Follow-up Tracker</title>
+  <style>
+    /* CSS Reset and Design Tokens */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --bg-canvas: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-subtle: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #64748b;
+      --border-color: #e2e8f0;
+      --border-focus: #4f46e5;
+      
+      --brand-primary: #4f46e5;
+      --brand-primary-hover: #4338ca;
+      --brand-primary-light: #eef2ff;
+      
+      --color-success: #059669;
+      --color-success-bg: #ecfdf5;
+      --color-success-border: #a7f3d0;
+      
+      --color-warning: #d97706;
+      --color-warning-bg: #fffbeb;
+      --color-warning-border: #fde68a;
+      
+      --color-danger: #dc2626;
+      --color-danger-bg: #fef2f2;
+      --color-danger-border: #fecaca;
+      
+      --color-info: #0284c7;
+      --color-info-bg: #f0f9ff;
+      --color-info-border: #bae6fd;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-brand h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-tag {
+      background: var(--brand-primary);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .header-brand p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .demo-anchor-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--brand-primary-light);
+      border: 1px solid #c7d2fe;
+      color: var(--brand-primary-hover);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      text-decoration: none;
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      border-color: var(--border-color);
+      color: var(--text-muted);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-surface-subtle);
+      color: var(--text-main);
+      border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: var(--brand-primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--brand-primary-hover);
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+
+    /* Explanation Banner */
+    .context-banner {
+      background: #faf5ff;
+      border: 1px solid #e9d5ff;
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #581c87;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .context-banner strong {
+      color: #3b0764;
+    }
+
+    /* Walkthrough Card */
+    .walkthrough-card {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .walkthrough-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e3a8a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .walkthrough-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .walkthrough-step {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .walkthrough-step strong {
+      color: #1d4ed8;
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .metric-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-md);
+    }
+
+    .metric-card.active {
+      border-color: var(--brand-primary);
+      background: #fdfefe;
+      box-shadow: 0 0 0 1px var(--brand-primary);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .metric-hint {
+      font-size: 11px;
+      color: var(--text-subtle);
+    }
+
+    /* Storage Alert */
+    .storage-banner {
+      display: none;
+      background: var(--color-warning-bg);
+      border: 1px solid var(--color-warning-border);
+      color: #92400e;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Main Workspace Layout */
+    .workspace-layout {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .workspace-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Panel: Table & Queue */
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #fafafa;
+    }
+
+    .panel-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .queue-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tab-btn:hover {
+      background: var(--bg-surface-subtle);
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: var(--bg-surface);
+      color: var(--brand-primary);
+      border-color: var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-count {
+      display: inline-block;
+      margin-left: 4px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 11px;
+    }
+
+    .tab-btn.active .tab-count {
+      background: var(--brand-primary-light);
+      color: var(--brand-primary-hover);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-input {
+      flex: 1;
+      font-family: inherit;
+      font-size: 13px;
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px var(--brand-primary-light);
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      max-height: 600px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--text-subtle);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+      color: var(--text-main);
+    }
+
+    tr {
+      cursor: pointer;
+      transition: background-color 0.1s;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    tr.selected-row {
+      background-color: #eef2ff !important;
+    }
+
+    .lead-meta-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .lead-id-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6366f1;
+      letter-spacing: 0.3px;
+    }
+
+    .lead-parent-name {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .lead-student-info {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .badge-due {
+      background: var(--color-warning-bg);
+      color: #92400e;
+      border: 1px solid var(--color-warning-border);
+    }
+
+    .badge-review {
+      background: var(--color-danger-bg);
+      color: #991b1b;
+      border: 1px solid var(--color-danger-border);
+    }
+
+    .badge-cooldown {
+      background: var(--color-info-bg);
+      color: #075985;
+      border: 1px solid var(--color-info-border);
+    }
+
+    .badge-booked {
+      background: var(--color-success-bg);
+      color: #065f46;
+      border: 1px solid var(--color-success-border);
+    }
+
+    .badge-inactive {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
+    .reason-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .next-action-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    /* Right Panel: Action & Details */
+    .action-panel {
+      position: sticky;
+      top: 24px;
+    }
+
+    .action-panel-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .selected-lead-header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .lead-title-area h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .lead-title-area p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-size: 12px;
+    }
+
+    .detail-item-label {
+      color: var(--text-subtle);
+      font-weight: 500;
+    }
+
+    .detail-item-value {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Message Suggestion Box */
+    .message-card {
+      background: #ffffff;
+      border: 1px solid #c7d2fe;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(79, 70, 229, 0.08);
+    }
+
+    .message-header {
+      background: #eef2ff;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e0e7ff;
+    }
+
+    .message-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3730a3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .message-body {
+      padding: 14px;
+      font-size: 13px;
+      color: #1e1b4b;
+      line-height: 1.5;
+      background: #fafbff;
+      white-space: pre-wrap;
+      font-family: inherit;
+    }
+
+    .slot-pills-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .slot-pill {
+      background: #ffffff;
+      border: 1px solid #818cf8;
+      color: #3730a3;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Unavailable Slots Alert */
+    .slots-unavailable-box {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slots-unavailable-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .slots-unavailable-desc {
+      font-size: 12px;
+      color: #78350f;
+    }
+
+    /* Outcome Form */
+    .outcome-form {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .form-select, .form-textarea {
+      font-family: inherit;
+      font-size: 13px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-select:focus, .form-textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px var(--brand-primary-light);
+    }
+
+    .form-disclaimer {
+      font-size: 11px;
+      color: var(--text-subtle);
+      line-height: 1.4;
+      background: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border-left: 3px solid #cbd5e1;
+    }
+
+    .toast-msg {
+      display: none;
+      padding: 8px 12px;
+      background: var(--color-success-bg);
+      border: 1px solid var(--color-success-border);
+      color: var(--color-success);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    /* Modal for 'Find Suitable Times' */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 500px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-subtle);
+      padding: 16px 0;
+      border-top: 1px solid var(--border-color);
+      margin-top: 20px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <div class="header-top">
+      <div class="header-brand">
+        <h1>
+          BrightChamps · Booking Follow-up Tracker
+          <span class="brand-tag">Prototype</span>
+        </h1>
+        <p>Assisted scheduling workflow for recent unbooked leads (1,771 historical gap · ₹7,96,950/mo acquisition spending)</p>
+      </div>
+      <div class="header-actions">
+        <div class="demo-anchor-badge" title="All time calculations anchor to this fixed demo point so test scenarios remain permanent">
+          🕒 Fixed Demo Date: <strong>Wed, Sep 30, 2026, 10:00 AM IST</strong>
+        </div>
+        <button id="btnDownloadCsv" class="btn btn-secondary" title="Export current leads table as CSV">
+          📥 Download CSV
+        </button>
+        <button id="btnResetDemo" class="btn btn-secondary" title="Restore original 12 fictional demo leads">
+          🔄 Reset Demo
+        </button>
+      </div>
+    </div>
+
+    <!-- Operating Assumptions & Boundary Banner -->
+    <div class="context-banner">
+      <div>
+        <strong>Operating Assumptions & Demonstration Boundary:</strong>
+        The 12 records below are fictional demonstration examples. Rules evaluate leads created within the last 7 days, unbooked for &ge; 24 hours, with no contact within the last 24 hours, and no opt-out. Missing data is classified as "Needs Review".
+      </div>
+      <div>
+        <em>Notice: This prototype records coordinator follow-up actions and confirmed bookings from BrightChamps' existing scheduling system. It does not send live messages, create automated calendar events, or project speculative revenue.</em>
+      </div>
+    </div>
+
+    <!-- Storage Status Alert if LocalStorage fails -->
+    <div id="storageAlert" class="storage-banner">
+      ⚠️ Local browser storage is unavailable. Changes remain active in this tab session and can be exported via CSV.
+    </div>
+
+    <!-- 1-Minute Walkthrough Guide -->
+    <div class="walkthrough-card">
+      <div class="walkthrough-title">
+        <span>⚡</span> How to test this in 1 minute
+      </div>
+      <div class="walkthrough-steps">
+        <div class="walkthrough-step">
+          <strong>1. Review the Queue</strong>
+          Look at the active leads. Notice why each is flagged (e.g. unbooked >24h, awaiting reply cooldown passed, or missing CRM status).
+        </div>
+        <div class="walkthrough-step">
+          <strong>2. Select a Lead & Copy Message</strong>
+          Click on <strong>LEAD-101 (Priya Sharma)</strong>. Inspect the personalized message offering two suitable slots. Click <strong>Copy Message</strong>.
+        </div>
+        <div class="walkthrough-step">
+          <strong>3. Record an Outcome</strong>
+          Select <strong>Demo booked</strong> or <strong>Contacted / awaiting reply</strong> and click <strong>Save Outcome</strong>. The lead immediately updates next action and leaves or updates the queue.
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Summary Metric Cards -->
+  <section class="metrics-grid">
+    <div class="metric-card active" data-filter="active" id="cardActiveQueue">
+      <span class="metric-label">Active Follow-up Queue</span>
+      <span class="metric-value" id="countActive">0</span>
+      <span class="metric-hint">Eligible for outreach today</span>
+    </div>
+    <div class="metric-card" data-filter="review" id="cardNeedsReview">
+      <span class="metric-label">Needs Review</span>
+      <span class="metric-value" id="countReview" style="color: #b91c1c;">0</span>
+      <span class="metric-hint">Missing booking/contact log</span>
+    </div>
+    <div class="metric-card" data-filter="progress" id="cardInProgress">
+      <span class="metric-label">In Progress / Cooldown</span>
+      <span class="metric-value" id="countProgress" style="color: #0369a1;">0</span>
+      <span class="metric-hint">Contacted within last 24h</span>
+    </div>
+    <div class="metric-card" data-filter="booked" id="cardBooked">
+      <span class="metric-label">Demo Booked</span>
+      <span class="metric-value" id="countBooked" style="color: #047857;">0</span>
+      <span class="metric-hint">Confirmed in booking system</span>
+    </div>
+    <div class="metric-card" data-filter="inactive" id="cardDeclined">
+      <span class="metric-label">Declined / Out of Scope</span>
+      <span class="metric-value" id="countInactive" style="color: #475569;">0</span>
+      <span class="metric-hint">Not interested or &gt;7 days old</span>
+    </div>
+    <div class="metric-card" data-filter="all" id="cardTotal">
+      <span class="metric-label">Total Leads</span>
+      <span class="metric-value" id="countTotal">12</span>
+      <span class="metric-hint">All demonstration records</span>
+    </div>
+  </section>
+
+  <!-- Workspace Grid: Table (Left) + Action Panel (Right) -->
+  <main class="workspace-layout">
+    <!-- Left: Table & Queue Filter -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <div class="panel-title">
+            <span>📋</span> <span id="currentViewTitle">Active Follow-up Queue</span>
+          </div>
+          <div class="search-row">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by lead ID, parent, or course..." />
+          </div>
+        </div>
+        <div class="queue-tabs">
+          <button class="tab-btn active" data-tab="active">Active Queue <span class="tab-count" id="tabCountActive">0</span></button>
+          <button class="tab-btn" data-tab="review">Needs Review <span class="tab-count" id="tabCountReview">0</span></button>
+          <button class="tab-btn" data-tab="progress">In Progress <span class="tab-count" id="tabCountProgress">0</span></button>
+          <button class="tab-btn" data-tab="booked">Demo Booked <span class="tab-count" id="tabCountBooked">0</span></button>
+          <button class="tab-btn" data-tab="inactive">Declined / Inactive <span class="tab-count" id="tabCountInactive">0</span></button>
+          <button class="tab-btn" data-tab="all">All Leads <span class="tab-count" id="tabCountAll">12</span></button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Lead Details</th>
+              <th>Course / Grade</th>
+              <th>Age & Contact</th>
+              <th>Status</th>
+              <th>Why Attention is Needed</th>
+              <th>Next Action</th>
+            </tr>
+          </thead>
+          <tbody id="leadTableBody">
+            <!-- Dynamic rows inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Right: Coordinator Action Panel -->
+    <aside class="panel action-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>🎯</span> Coordinator Action & Slot Assistance
+        </div>
+      </div>
+
+      <div class="action-panel-body" id="actionPanelBody">
+        <!-- Dynamically rendered based on selected lead -->
+      </div>
+    </aside>
+  </main>
+
+  <!-- Modal for 'Find suitable times' -->
+  <div id="slotSearchModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title">
+        <span>🔍</span> Slot Matching: Coordinator Guidance
+      </div>
+      <div class="modal-body">
+        <p><strong>Lead:</strong> <span id="modalLeadName">--</span> (<span id="modalLeadCourse">--</span>)</p>
+        <p style="margin-top: 10px;">
+          No standard slots are pre-allocated in the current teacher roster for this student's grade and timezone.
+        </p>
+        <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin: 12px 0; font-size: 12px;">
+          <strong>Suggested Coordinator Steps:</strong>
+          <ol style="margin-left: 20px; margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+            <li>Open the Master Instructor Roster in the existing scheduling calendar.</li>
+            <li>Inquire with parent: <em>"Hi, we'd love to set up the trial class. What day and time window works best for you this week? I'll personally match an instructor."</em></li>
+            <li>Record their preferred time below under <strong>"Needs another time"</strong>.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="btnCloseModal" class="btn btn-primary btn-sm">Understood</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    BrightChamps Take-Home Case · Working Prototype · Lever: Daily Booking-Assistance Follow-up for Recent Unbooked Leads · Single-page offline capable build
+  </footer>
+</div>
+
+<script>
+/**
+ * BrightChamps Booking Follow-up Tracker
+ * Self-contained prototype for unbooked lead assistance.
+ */
+
+// 1. Fixed Demonstration Date Anchor (Wednesday Sep 30, 2026, 10:00 AM IST)
+const FIXED_DEMO_TIME_STR = "2026-09-30T10:00:00";
+const DEMO_NOW = new Date(FIXED_DEMO_TIME_STR);
+
+// 2. Initial Fictional Demonstration Dataset (12 clearly labelled leads)
+const INITIAL_LEADS = [
+  {
+    id: "LEAD-101",
+    parentName: "Priya Sharma",
+    childName: "Aarav",
+    childGrade: "Grade 5",
+    courseInterest: "Next-Gen Coding & AI",
+    timezone: "Asia/Kolkata (IST)",
+    phone: "+91 98765 43210",
+    createdTimestamp: "2026-09-28T14:00:00", // 44h ago
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: null,
+    contactAttempts: 0,
+    lastContactOutcome: null,
+    lastContactNotes: "Registered via Facebook Ad; no prior contact.",
+    slotsAvailable: [
+      { id: "s1", timeStr: "Thu, Oct 1 · 4:00 PM IST" },
+      { id: "s2", timeStr: "Fri, Oct 2 · 6:00 PM IST" }
+    ],
+    optOut: false
+  },
+  {
+    id: "LEAD-102",
+    parentName: "Rajiv Mehta",
+    childName: "Rhea",
+    childGrade: "Grade 7",
+    courseInterest: "Game Development with Python",
+    timezone: "Asia/Kolkata (IST)",
+    phone: "+91 98111 22334",
+    createdTimestamp: "2026-09-27T09:00:00", // 73h ago
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: "2026-09-29T08:30:00", // 25.5h ago (>24h cooldown)
+    contactAttempts: 1,
+    lastContactOutcome: "contacted_awaiting_reply",
+    lastContactNotes: "Sent WhatsApp slot offer on Sep 29 morning; parent viewed but didn't pick slot.",
+    slotsAvailable: [
+      { id: "s3", timeStr: "Thu, Oct 1 · 5:00 PM IST" },
+      { id: "s4", timeStr: "Fri, Oct 2 · 4:00 PM IST" }
+    ],
+    optOut: false
+  },
+  {
+    id: "LEAD-103",
+    parentName: "Sarah Jenkins",
+    childName: "Oliver",
+    childGrade: "Grade 4",
+    courseInterest: "STEM Foundations & Robotics",
+    timezone: "Asia/Dubai (GST)",
+    phone: "+971 50 123 4567",
+    createdTimestamp: "2026-09-26T16:00:00", // 90h ago
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: "2026-09-30T07:30:00", // 2.5h ago (<24h cooldown!)
+    contactAttempts: 1,
+    lastContactOutcome: "contacted_awaiting_reply",
+    lastContactNotes: "Sent WhatsApp message this morning; awaiting reply.",
+    slotsAvailable: [
+      { id: "s5", timeStr: "Thu, Oct 1 · 3:00 PM GST" },
+      { id: "s6", timeStr: "Sat, Oct 3 · 11:00 AM GST" }
+    ],
+    optOut: false
+  },
+  {
+    id: "LEAD-104",
+    parentName: "Amit Patel",
+    childName: "Diya",
+    childGrade: "Grade 6",
+    courseInterest: "Next-Gen Coding & AI",
+    timezone: "Asia/Kolkata (IST)",
+    phone: "+91 97234 56789",
+    createdTimestamp: "2026-09-30T04:15:00", // 5.75h ago (<24h grace window)
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: null,
+    contactAttempts: 0,
+    lastContactOutcome: null,
+    lastContactNotes: "New registration early today; in 24h parent self-booking window.",
+    slotsAvailable: [
+      { id: "s7", timeStr: "Fri, Oct 2 · 5:00 PM IST" },
+      { id: "s8", timeStr: "Sat, Oct 3 · 10:00 AM IST" }
+    ],
+    optOut: false
+  },
+  {
+    id: "LEAD-105",
+    parentName: "Farhan Al-Mansoor",
+    childName: "Zayd",
+    childGrade: "Grade 8",
+    courseInterest: "App Development & UI",
+    timezone: "Asia/Dubai (GST)",
+    phone: "+971 55 987 6543",
+    createdTimestamp: "2026-09-18T11:00:00", // 12 days ago (>7 days)
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: "2026-09-20T14:00:00",
+    contactAttempts: 2,
+    lastContactOutcome: "unreachable",
+    lastContactNotes: "Called twice previously; outside 7-day assisted pilot window.",
+    slotsAvailable: [
+      { id: "s9", timeStr: "Thu, Oct 1 · 4:30 PM GST" },
+      { id: "s10", timeStr: "Fri, Oct 2 · 3:00 PM GST" }
+    ],
+    optOut: false
+  },
+  {
+    id: "LEAD-106",
+    parentName: "Sunita Rao",
+    childName: "Tanvi",
+    childGrade: "Grade 5",
+    courseInterest: "Next-Gen Coding & AI",
+    timezone: "Asia/Kolkata (IST)",
+    phone: "+91 98450 12345",
+    createdTimestamp: "2026-09-27T15:00:00", // 67h ago
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: "missing_data", // Missing contact timestamp
+    contactAttempts: 1,
+    lastContactOutcome: null,
+    lastContactNotes: "CRM sync flag shows outreach occurred, but timestamp field is null.",
+    slotsAvailable: [
+      { id: "s11", timeStr: "Thu, Oct 1 · 6:00 PM IST" },
+      { id: "s12", timeStr: "Sat, Oct 3 · 4:00 PM IST" }
+    ],
+    optOut: false
+  },
+  {
+    id: "LEAD-107",
+    parentName: "Vikram Singhania",
+    childName: "Kabir",
+    childGrade: "Grade 3",
+    courseInterest: "Creative Coding & Scratch",
+    timezone: "Asia/Kolkata (IST)",
+    phone: "+91 98200 55443",
+    createdTimestamp: "2026-09-28T18:00:00", // 40h ago
+    bookingStatus: "missing_data", // Missing booking status
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: null,
+    contactAttempts: 0,
+    lastContactOutcome: null,
+    lastContactNotes: "Booking status null in sync webhook; verify calendar before calling.",
+    slotsAvailable: [],
+    optOut: false
+  },
+  {
+    id: "LEAD-108",
+    parentName: "David Chen",
+    childName: "Lucas",
+    childGrade: "Grade 9",
+    courseInterest: "Advanced Robotics & Hardware",
+    timezone: "America/Los_Angeles (PST)",
+    phone: "+1 415 555 0192",
+    createdTimestamp: "2026-09-28T10:00:00", // 48h ago
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: null,
+    contactAttempts: 0,
+    lastContactOutcome: null,
+    lastContactNotes: "Unbooked 48h; Grade 9 PST teacher slots currently fully booked.",
+    slotsAvailable: [], // No slots available! Tests "Find suitable times"
+    optOut: false
+  },
+  {
+    id: "LEAD-109",
+    parentName: "Kavita Nair",
+    childName: "Ananya",
+    childGrade: "Grade 6",
+    courseInterest: "Python & Data Science",
+    timezone: "Asia/Kolkata (IST)",
+    phone: "+91 99160 88776",
+    createdTimestamp: "2026-09-27T16:00:00",
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: "2026-09-29T11:00:00",
+    contactAttempts: 1,
+    lastContactOutcome: "not_interested",
+    lastContactNotes: "Parent stated child is preparing for school exams this month; requested no more calls.",
+    slotsAvailable: [],
+    optOut: true // Declined further contact
+  },
+  {
+    id: "LEAD-110",
+    parentName: "Rajesh Verma",
+    childName: "Ishan",
+    childGrade: "Grade 5",
+    courseInterest: "Next-Gen Coding & AI",
+    timezone: "Asia/Kolkata (IST)",
+    phone: "+91 98300 44332",
+    createdTimestamp: "2026-09-26T12:00:00",
+    bookingStatus: "booked", // Confirmed booked
+    bookingConfirmedSlot: "Fri, Oct 2 · 5:00 PM IST",
+    lastContactTimestamp: "2026-09-29T15:00:00",
+    contactAttempts: 1,
+    lastContactOutcome: "demo_booked",
+    lastContactNotes: "Coordinator assisted booking; parent chose Friday 5 PM slot.",
+    slotsAvailable: [],
+    optOut: false
+  },
+  {
+    id: "LEAD-111",
+    parentName: "Meera Iyer",
+    childName: "Siddharth",
+    childGrade: "Grade 4",
+    courseInterest: "AI Explorers & Coding",
+    timezone: "Asia/Kolkata (IST)",
+    phone: "+91 94440 99887",
+    createdTimestamp: "2026-09-29T07:30:00", // 26.5h ago (boundary test >24h)
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: null,
+    contactAttempts: 0,
+    lastContactOutcome: null,
+    lastContactNotes: "Just crossed 24h unbooked threshold; due for initial outreach.",
+    slotsAvailable: [
+      { id: "s13", timeStr: "Thu, Oct 1 · 6:30 PM IST" },
+      { id: "s14", timeStr: "Fri, Oct 2 · 5:30 PM IST" }
+    ],
+    optOut: false
+  },
+  {
+    id: "LEAD-112",
+    parentName: "Tariq Mahmood",
+    childName: "Ayla",
+    childGrade: "Grade 7",
+    courseInterest: "Web Development & JavaScript",
+    timezone: "Asia/Dubai (GST)",
+    phone: "+971 52 334 4556",
+    createdTimestamp: "2026-09-25T14:00:00", // ~116h ago (4.8 days)
+    bookingStatus: "unbooked",
+    bookingConfirmedSlot: null,
+    lastContactTimestamp: "2026-09-29T09:00:00", // 25h ago
+    contactAttempts: 2,
+    lastContactOutcome: "unreachable",
+    lastContactNotes: "Attempt 2 went to voicemail yesterday morning; due for final attempt.",
+    slotsAvailable: [
+      { id: "s15", timeStr: "Thu, Oct 1 · 4:00 PM GST" },
+      { id: "s16", timeStr: "Fri, Oct 2 · 6:00 PM GST" }
+    ],
+    optOut: false
+  }
+];
+
+// Storage Key
+const STORAGE_KEY = "brightchamps_booking_tracker_v1";
+
+// State
+let leads = [];
+let currentFilter = "active";
+let selectedLeadId = "LEAD-101";
+let searchQuery = "";
+let isStorageAvailable = true;
+
+// 3. Evaluation Rules Engine
+function evaluateLead(lead) {
+  // A. Check for missing data
+  if (lead.bookingStatus === "missing_data" || lead.bookingStatus === null || lead.bookingStatus === undefined) {
+    return {
+      category: "needs_review",
+      badgeClass: "badge-review",
+      badgeText: "Needs Review",
+      reason: "Booking status unconfirmed in CRM sync; check calendar before contacting.",
+      nextAction: "Verify booking status in master scheduling system",
+      isActiveQueue: false
+    };
+  }
+
+  if (lead.lastContactTimestamp === "missing_data") {
+    return {
+      category: "needs_review",
+      badgeClass: "badge-review",
+      badgeText: "Needs Review",
+      reason: "Contact history incomplete; verify call/message log before outreach.",
+      nextAction: "Verify past outreach logs in phone system",
+      isActiveQueue: false
+    };
+  }
+
+  // B. Check if already booked
+  if (lead.bookingStatus === "booked") {
+    return {
+      category: "booked",
+      badgeClass: "badge-booked",
+      badgeText: "Demo Booked",
+      reason: lead.bookingConfirmedSlot
+        ? `Confirmed for ${lead.bookingConfirmedSlot}.`
+        : "Booking confirmed in existing scheduling system; exact slot not entered here.",
+      nextAction: "None (Demo confirmed in existing booking system)",
+      isActiveQueue: false
+    };
+  }
+
+  // C. Check if parent opted out
+  if (lead.optOut || lead.lastContactOutcome === "not_interested") {
+    return {
+      category: "inactive",
+      badgeClass: "badge-inactive",
+      badgeText: "Not Interested",
+      reason: "Parent declined further contact / opted out.",
+      nextAction: "None (Archived — do not contact)",
+      isActiveQueue: false
+    };
+  }
+
+  // D. Calculate hours since lead creation
+  const createdDate = new Date(lead.createdTimestamp);
+  const hoursSinceCreated = (DEMO_NOW - createdDate) / (1000 * 60 * 60);
+
+  // D1. Within initial 24h grace window (allow parent self-serve)
+  if (hoursSinceCreated < 24) {
+    const hoursLeft = Math.ceil(24 - hoursSinceCreated);
+    return {
+      category: "inactive",
+      badgeClass: "badge-inactive",
+      badgeText: "Within 24h Window",
+      reason: `Created ${Math.round(hoursSinceCreated)}h ago. Within 24h parent self-booking window.`,
+      nextAction: `Follow-up eligible in ~${hoursLeft}h if unbooked`,
+      isActiveQueue: false
+    };
+  }
+
+  // D2. Older than 7 days (> 168h)
+  if (hoursSinceCreated > (7 * 24)) {
+    const daysOld = Math.round(hoursSinceCreated / 24);
+    return {
+      category: "inactive",
+      badgeClass: "badge-inactive",
+      badgeText: "Beyond 7d Window",
+      reason: `Created ${daysOld} days ago. Beyond proposed 7-day pilot window.`,
+      nextAction: "None (Outside active assistance scope)",
+      isActiveQueue: false
+    };
+  }
+
+  // E. Check contact cooldown (must have no contact in last 24h)
+  if (lead.lastContactTimestamp) {
+    const contactDate = new Date(lead.lastContactTimestamp);
+    const hoursSinceContact = (DEMO_NOW - contactDate) / (1000 * 60 * 60);
+
+    if (hoursSinceContact < 24) {
+      const cooldownLeft = Math.ceil(24 - hoursSinceContact);
+      return {
+        category: "progress",
+        badgeClass: "badge-cooldown",
+        badgeText: "Contacted (Cooldown)",
+        reason: `Contacted ${Math.round(hoursSinceContact)}h ago. In 24h response cooldown.`,
+        nextAction: `Next follow-up eligible in ~${cooldownLeft}h`,
+        isActiveQueue: false
+      };
+    }
+  }
+
+  // F. Eligible for Active Follow-up Queue!
+  let reason = "";
+  let nextAction = "";
+  const createdHours = Math.round(hoursSinceCreated);
+
+  if (lead.contactAttempts === 0) {
+    reason = `Unbooked for ${createdHours}h; no prior contact; within 7d window.`;
+    nextAction = "Offer 2 suitable slots via WhatsApp/Call (Attempt 1)";
+  } else if (lead.lastContactOutcome === "contacted_awaiting_reply") {
+    reason = `Awaiting reply; last contact was >24h ago; unbooked for ${createdHours}h.`;
+    nextAction = `Send gentle reminder offering slots (Attempt ${lead.contactAttempts + 1})`;
+  } else if (lead.lastContactOutcome === "needs_another_time") {
+    reason = `Parent requested alternative slot; unbooked for ${createdHours}h.`;
+    nextAction = "Coordinate new available times with teacher schedule";
+  } else if (lead.lastContactOutcome === "unreachable") {
+    reason = `Unreachable on previous attempt; 24h cooldown passed.`;
+    nextAction = `Retry phone outreach / WhatsApp ping (Attempt ${lead.contactAttempts + 1})`;
+  } else {
+    reason = `Unbooked for ${createdHours}h; eligible for assisted booking.`;
+    nextAction = `Follow-up outreach (Attempt ${lead.contactAttempts + 1})`;
+  }
+
+  // If slots are unavailable, adjust nextAction
+  if (!lead.slotsAvailable || lead.slotsAvailable.length === 0) {
+    reason += " (No pre-set slots available)";
+    nextAction = "Check master teacher roster for matching slot";
+  }
+
+  return {
+    category: "active",
+    badgeClass: "badge-due",
+    badgeText: "Due for Follow-up",
+    reason: reason,
+    nextAction: nextAction,
+    isActiveQueue: true
+  };
+}
+
+// 4. Persistence Management
+function loadLeads() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn("Storage access failed:", err);
+    isStorageAvailable = false;
+    document.getElementById("storageAlert").style.display = "block";
+  }
+  return JSON.parse(JSON.stringify(INITIAL_LEADS));
+}
+
+function saveLeads() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
+  } catch (err) {
+    console.warn("Failed saving to localStorage:", err);
+    isStorageAvailable = false;
+    document.getElementById("storageAlert").style.display = "block";
+  }
+}
+
+// 5. Compute Counts (Counts unique leads, never inflated by repeated actions)
+function updateMetricCounts() {
+  let activeCount = 0;
+  let reviewCount = 0;
+  let progressCount = 0;
+  let bookedCount = 0;
+  let inactiveCount = 0;
+
+  leads.forEach(lead => {
+    const evalResult = evaluateLead(lead);
+    if (evalResult.category === "active") activeCount++;
+    else if (evalResult.category === "needs_review") reviewCount++;
+    else if (evalResult.category === "progress") progressCount++;
+    else if (evalResult.category === "booked") bookedCount++;
+    else if (evalResult.category === "inactive") inactiveCount++;
+  });
+
+  document.getElementById("countActive").textContent = activeCount;
+  document.getElementById("countReview").textContent = reviewCount;
+  document.getElementById("countProgress").textContent = progressCount;
+  document.getElementById("countBooked").textContent = bookedCount;
+  document.getElementById("countInactive").textContent = inactiveCount;
+  document.getElementById("countTotal").textContent = leads.length;
+
+  document.getElementById("tabCountActive").textContent = activeCount;
+  document.getElementById("tabCountReview").textContent = reviewCount;
+  document.getElementById("tabCountProgress").textContent = progressCount;
+  document.getElementById("tabCountBooked").textContent = bookedCount;
+  document.getElementById("tabCountInactive").textContent = inactiveCount;
+  document.getElementById("tabCountAll").textContent = leads.length;
+}
+
+// 6. Filter and Render Table
+function renderTable() {
+  const tbody = document.getElementById("leadTableBody");
+  tbody.innerHTML = "";
+
+  const query = searchQuery.trim().toLowerCase();
+
+  const filtered = leads.filter(lead => {
+    const evalResult = evaluateLead(lead);
+    
+    // Tab filter
+    if (currentFilter === "active" && !evalResult.isActiveQueue) return false;
+    if (currentFilter === "review" && evalResult.category !== "needs_review") return false;
+    if (currentFilter === "progress" && evalResult.category !== "progress") return false;
+    if (currentFilter === "booked" && evalResult.category !== "booked") return false;
+    if (currentFilter === "inactive" && evalResult.category !== "inactive") return false;
+    // 'all' includes everyone
+
+    // Search filter
+    if (query) {
+      const match = 
+        lead.id.toLowerCase().includes(query) ||
+        lead.parentName.toLowerCase().includes(query) ||
+        lead.childName.toLowerCase().includes(query) ||
+        lead.courseInterest.toLowerCase().includes(query);
+      if (!match) return false;
+    }
+
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    selectedLeadId = null;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="6" style="text-align: center; padding: 32px; color: var(--text-subtle);">
+      No leads found matching current filter/search.
+    </td>`;
+    tbody.appendChild(tr);
+    return;
+  }
+
+  // Ensure selected lead is valid; if current selection is not in list, select first available
+  const hasSelected = filtered.some(l => l.id === selectedLeadId);
+  if (!hasSelected && filtered.length > 0) {
+    selectedLeadId = filtered[0].id;
+  }
+
+  filtered.forEach(lead => {
+    const evalResult = evaluateLead(lead);
+    const tr = document.createElement("tr");
+    tr.dataset.id = lead.id;
+    if (lead.id === selectedLeadId) {
+      tr.classList.add("selected-row");
+    }
+
+    const createdDate = new Date(lead.createdTimestamp);
+    const hoursSince = Math.round((DEMO_NOW - createdDate) / (1000 * 60 * 60));
+    const ageDisplay = hoursSince < 24 ? `${hoursSince}h ago` : `${Math.round(hoursSince/24)}d ago (${hoursSince}h)`;
+
+    let contactDisplay = "Never contacted";
+    if (lead.lastContactTimestamp === "missing_data") {
+      contactDisplay = "⚠️ Timestamp missing";
+    } else if (lead.lastContactTimestamp) {
+      const contactHours = Math.round((DEMO_NOW - new Date(lead.lastContactTimestamp)) / (1000 * 60 * 60));
+      contactDisplay = `${contactHours}h ago (Att: ${lead.contactAttempts})`;
+    }
+
+    tr.innerHTML = `
+      <td>
+        <div class="lead-meta-cell">
+          <span class="lead-id-badge">${escapeHtml(lead.id)}</span>
+          <span class="lead-parent-name">${escapeHtml(lead.parentName)}</span>
+          <span class="lead-student-info">Child: ${escapeHtml(lead.childName)} (${escapeHtml(lead.childGrade)})</span>
+        </div>
+      </td>
+      <td>
+        <div style="font-weight: 500;">${escapeHtml(lead.courseInterest)}</div>
+        <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(lead.timezone)}</div>
+      </td>
+      <td>
+        <div style="font-weight: 500;">Created: ${ageDisplay}</div>
+        <div style="font-size: 11px; color: var(--text-subtle);">Contact: ${contactDisplay}</div>
+      </td>
+      <td>
+        <span class="status-badge ${evalResult.badgeClass}">
+          ${escapeHtml(evalResult.badgeText)}
+        </span>
+      </td>
+      <td>
+        <div class="reason-text">${escapeHtml(evalResult.reason)}</div>
+      </td>
+      <td>
+        <div class="next-action-text">${escapeHtml(evalResult.nextAction)}</div>
+      </td>
+    `;
+
+    tr.addEventListener("click", () => {
+      selectedLeadId = lead.id;
+      document.querySelectorAll("#leadTableBody tr").forEach(r => r.classList.remove("selected-row"));
+      tr.classList.add("selected-row");
+      renderActionPanel();
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+// 7. Render Coordinator Action Panel
+function renderActionPanel() {
+  const panel = document.getElementById("actionPanelBody");
+  const lead = leads.find(l => l.id === selectedLeadId);
+
+  if (!lead) {
+    panel.innerHTML = `<div style="text-align: center; color: var(--text-subtle); padding: 40px;">
+      Select a lead from the queue to view details and record outreach.
+    </div>`;
+    return;
+  }
+
+  const evalResult = evaluateLead(lead);
+  const canOffer = evalResult.category === "active";
+  const canRecordReply = canOffer || evalResult.category === "progress";
+
+  // Compute timing strings
+  const createdDate = new Date(lead.createdTimestamp);
+  const hoursSinceCreated = Math.round((DEMO_NOW - createdDate) / (1000 * 60 * 60));
+  
+  let lastContactStr = "None recorded";
+  if (lead.lastContactTimestamp === "missing_data") {
+    lastContactStr = "⚠️ Corrupted / Missing in CRM";
+  } else if (lead.lastContactTimestamp) {
+    const contactDate = new Date(lead.lastContactTimestamp);
+    const hoursSinceContact = Math.round((DEMO_NOW - contactDate) / (1000 * 60 * 60));
+    lastContactStr = `${contactDate.toLocaleString()} (${hoursSinceContact}h ago)`;
+  }
+
+  // Construct personalized suggested message
+  let messageContent = "";
+  let slotsHtml = "";
+  const hasSlots = canOffer && lead.slotsAvailable && lead.slotsAvailable.length > 0;
+
+  if (!canOffer) {
+    slotsHtml = `
+      <div class="slots-unavailable-box">
+        <div class="slots-unavailable-title">${escapeHtml(evalResult.badgeText)}</div>
+        <div class="slots-unavailable-desc">${escapeHtml(evalResult.nextAction)}. No new offer should be sent from this view.</div>
+      </div>
+    `;
+  } else if (hasSlots) {
+    const slotListStr = lead.slotsAvailable.map((s, idx) => `${idx + 1}) ${s.timeStr}`).join("\n");
+    messageContent = `Hi ${lead.parentName}, this is the BrightChamps Academic Coordination Team. I noticed you recently registered for ${lead.childName}'s trial class in ${lead.courseInterest}. Would you still like to experience the interactive demo?
+
+We have two convenient slots open:
+${slotListStr}
+
+Please let me know which time works best for you and ${lead.childName}!`;
+
+    slotsHtml = `
+      <div class="message-card">
+        <div class="message-header">
+          <span class="message-title">💬 Suggested WhatsApp / Call Script</span>
+          <button id="btnCopyMessage" class="btn btn-primary btn-sm">📋 Copy Message</button>
+        </div>
+        <div style="padding: 10px 14px; background: #fff7ed; color: #9a3412; font-size: 12px;">
+          Demonstration slots only. Check the current booking and teacher roster before offering times to a real parent.
+        </div>
+        <div class="message-body" id="messageText">${escapeHtml(messageContent)}</div>
+        <div style="padding: 10px 14px; background: #ffffff; border-top: 1px solid #e0e7ff;">
+          <div style="font-size: 11px; font-weight: 600; color: #4338ca; margin-bottom: 4px;">OFFERED SLOTS:</div>
+          <div class="slot-pills-row">
+            ${lead.slotsAvailable.map(s => `<span class="slot-pill">🕒 ${escapeHtml(s.timeStr)}</span>`).join("")}
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    // No slots available
+    slotsHtml = `
+      <div class="slots-unavailable-box">
+        <div class="slots-unavailable-title">
+          <span>⚠️</span> No Pre-allocated Slots Available
+        </div>
+        <div class="slots-unavailable-desc">
+          No matching demo slots currently open in the teacher roster for ${escapeHtml(lead.courseInterest)} (${escapeHtml(lead.timezone)}).
+        </div>
+        <button id="btnFindSlots" class="btn btn-secondary btn-sm" style="align-self: flex-start; margin-top: 4px;">
+          🔍 Find suitable times
+        </button>
+      </div>
+    `;
+  }
+
+  panel.innerHTML = `
+    <div class="selected-lead-header">
+      <div class="lead-title-area">
+        <h3>${escapeHtml(lead.parentName)} (${escapeHtml(lead.id)})</h3>
+        <p>Child: <strong>${escapeHtml(lead.childName)}</strong> (${escapeHtml(lead.childGrade)}) · ${escapeHtml(lead.courseInterest)}</p>
+      </div>
+      <div>
+        <span class="status-badge ${evalResult.badgeClass}">
+          ${escapeHtml(evalResult.badgeText)}
+        </span>
+      </div>
+    </div>
+
+    <!-- Metadata Details -->
+    <div class="detail-grid">
+      <div>
+        <div class="detail-item-label">Phone:</div>
+        <div class="detail-item-value">${escapeHtml(lead.phone)}</div>
+      </div>
+      <div>
+        <div class="detail-item-label">Timezone:</div>
+        <div class="detail-item-value">${escapeHtml(lead.timezone)}</div>
+      </div>
+      <div>
+        <div class="detail-item-label">Lead Created:</div>
+        <div class="detail-item-value">${hoursSinceCreated}h ago (${createdDate.toLocaleDateString()})</div>
+      </div>
+      <div>
+        <div class="detail-item-label">Total Attempts:</div>
+        <div class="detail-item-value">${lead.contactAttempts} attempt(s)</div>
+      </div>
+      <div style="grid-column: span 2;">
+        <div class="detail-item-label">Last Contact & Note:</div>
+        <div class="detail-item-value">${escapeHtml(lastContactStr)}</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+          ${escapeHtml(lead.lastContactNotes || 'No notes logged yet.')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Message / Slot Suggestion Area -->
+    ${slotsHtml}
+
+    <!-- Coordinator Action Form -->
+    ${canRecordReply ? `<form class="outcome-form" id="outcomeForm">
+      <div class="form-title">
+        <span>📝</span> Record Coordinator Outcome
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="selectOutcome">Follow-up Outcome:</label>
+        <select class="form-select" id="selectOutcome" required>
+          <option value="">-- Choose outcome --</option>
+          ${canOffer ? `<option value="contacted_awaiting_reply">Contacted / awaiting reply</option>` : ""}
+          <option value="needs_another_time">Needs another time / custom slot</option>
+          ${canOffer ? `<option value="unreachable">Unreachable (No answer / Voicemail)</option>` : ""}
+          <option value="not_interested">Not interested (Decline further contact)</option>
+          <option value="demo_booked">Demo booked (Confirmed in existing system)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="actionNotes">Notes & Details:</label>
+        <textarea class="form-textarea" id="actionNotes" rows="2" placeholder="e.g. Parent requested evening slot after 7 PM IST..."></textarea>
+      </div>
+
+      <div class="form-disclaimer">
+        ℹ️ <strong>System Note:</strong> "Demo booked" records that a booking was confirmed in BrightChamps' existing scheduling system. This prototype records operational progress and does not make appointments.
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="btnSaveAction">
+        💾 Save Outcome
+      </button>
+
+      <div id="saveToast" class="toast-msg">
+        ✅ Outcome saved successfully! Next action and queue updated.
+      </div>
+    </form>` : ""}
+  `;
+
+  // Attach Event Handlers
+  if (hasSlots) {
+    const copyBtn = document.getElementById("btnCopyMessage");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", () => {
+        const text = document.getElementById("messageText").textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            copyBtn.textContent = "✅ Copied!";
+            setTimeout(() => { copyBtn.textContent = "📋 Copy Message"; }, 2000);
+          }).catch(() => fallbackCopy(text, copyBtn));
+        } else {
+          fallbackCopy(text, copyBtn);
+        }
+      });
+    }
+  } else {
+    const findBtn = document.getElementById("btnFindSlots");
+    if (findBtn) {
+      findBtn.addEventListener("click", () => {
+        document.getElementById("modalLeadName").textContent = `${lead.parentName} (${lead.childName})`;
+        document.getElementById("modalLeadCourse").textContent = lead.courseInterest;
+        document.getElementById("slotSearchModal").style.display = "flex";
+      });
+    }
+  }
+
+  // Outcome Form Submit
+  const form = document.getElementById("outcomeForm");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const outcome = document.getElementById("selectOutcome").value;
+      const notes = document.getElementById("actionNotes").value.trim();
+
+      if (!outcome) return;
+
+      recordLeadOutcome(lead.id, outcome, notes);
+    });
+  }
+}
+
+function fallbackCopy(text, btn) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand("copy");
+    btn.textContent = "✅ Copied!";
+    setTimeout(() => { btn.textContent = "📋 Copy Message"; }, 2000);
+  } catch (e) {
+    alert("Please select and copy the text manually.");
+  }
+  document.body.removeChild(ta);
+}
+
+// 8. Record Outcome & Update State
+function recordLeadOutcome(leadId, outcome, notes) {
+  const lead = leads.find(l => l.id === leadId);
+  if (!lead) return;
+  const category = evaluateLead(lead).category;
+  const replyOnly = ["needs_another_time", "not_interested", "demo_booked"];
+  if (category !== "active" && !(category === "progress" && replyOnly.includes(outcome))) return;
+
+  // Update timestamps and counters
+  const newAttempt = category === "active" && lead.lastContactTimestamp !== FIXED_DEMO_TIME_STR;
+  lead.lastContactTimestamp = FIXED_DEMO_TIME_STR;
+  lead.lastContactOutcome = outcome;
+  if (newAttempt) lead.contactAttempts = (lead.contactAttempts || 0) + 1;
+
+  if (notes) {
+    lead.lastContactNotes = notes;
+  }
+
+  if (outcome === "demo_booked") {
+    lead.bookingStatus = "booked";
+    // Notes may describe a call rather than a precise slot. Do not present them as a verified appointment time.
+    lead.bookingConfirmedSlot = null;
+  } else if (outcome === "not_interested") {
+    lead.optOut = true;
+    if (!lead.lastContactNotes) {
+      lead.lastContactNotes = "Parent declined further contact.";
+    }
+  } else if (outcome === "needs_another_time") {
+    if (!notes) {
+      lead.lastContactNotes = "Parent requested alternative schedule options.";
+    }
+  } else if (outcome === "contacted_awaiting_reply") {
+    if (!notes) {
+      lead.lastContactNotes = "Contacted with 2 slot offers; awaiting response.";
+    }
+  } else if (outcome === "unreachable") {
+    if (!notes) {
+      lead.lastContactNotes = "Call unanswered / voicemail left.";
+    }
+  }
+
+  // Save to localStorage
+  saveLeads();
+
+  // Show Toast
+  const toast = document.getElementById("saveToast");
+  if (toast) {
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, 2500);
+  }
+
+  // Re-render UI
+  updateMetricCounts();
+  renderTable();
+  renderActionPanel();
+}
+
+// 9. CSV Export (Spreadsheet-safe with RFC 4180 escaping and formula sanitization)
+function downloadCsv() {
+  const headers = [
+    "Lead ID",
+    "Parent Name",
+    "Child Name",
+    "Grade",
+    "Course Interest",
+    "Timezone",
+    "Phone",
+    "Created Timestamp",
+    "Booking Status",
+    "Confirmed Slot",
+    "Last Contact Timestamp",
+    "Contact Attempts",
+    "Last Outcome",
+    "Notes",
+    "Status Category",
+    "Why Attention is Needed",
+    "Next Action"
+  ];
+
+  function sanitizeCell(val) {
+    if (val === null || val === undefined) return '""';
+    let str = String(val);
+    // Formula injection mitigation (prepend apostrophe if starts with =, +, -, @)
+    if (/^[=\+\-@]/.test(str)) {
+      str = "'" + str;
+    }
+    // Escape double quotes
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+
+  const rows = leads.map(lead => {
+    const evalResult = evaluateLead(lead);
+    return [
+      sanitizeCell(lead.id),
+      sanitizeCell(lead.parentName),
+      sanitizeCell(lead.childName),
+      sanitizeCell(lead.childGrade),
+      sanitizeCell(lead.courseInterest),
+      sanitizeCell(lead.timezone),
+      sanitizeCell(lead.phone),
+      sanitizeCell(lead.createdTimestamp),
+      sanitizeCell(lead.bookingStatus),
+      sanitizeCell(lead.bookingConfirmedSlot || ""),
+      sanitizeCell(lead.lastContactTimestamp || ""),
+      sanitizeCell(lead.contactAttempts),
+      sanitizeCell(lead.lastContactOutcome || ""),
+      sanitizeCell(lead.lastContactNotes || ""),
+      sanitizeCell(evalResult.badgeText),
+      sanitizeCell(evalResult.reason),
+      sanitizeCell(evalResult.nextAction)
+    ].join(",");
+  });
+
+  // UTF-8 BOM \uFEFF ensures proper character rendering in Microsoft Excel
+  const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\r\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "brightchamps_booking_followup_records.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// 10. Reset Demo
+function resetDemo() {
+  if (confirm("Reset demo data back to the original 12 demonstration records?")) {
+    leads = JSON.parse(JSON.stringify(INITIAL_LEADS));
+    selectedLeadId = "LEAD-101";
+    saveLeads();
+    updateMetricCounts();
+    renderTable();
+    renderActionPanel();
+  }
+}
+
+// 11. Helper to escape HTML
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// 12. Initialize App
+document.addEventListener("DOMContentLoaded", () => {
+  leads = loadLeads();
+
+  // Metrics click filtering
+  document.querySelectorAll(".metric-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const filter = card.dataset.filter;
+      setFilter(filter);
+    });
+  });
+
+  // Queue tab filtering
+  document.querySelectorAll(".tab-btn").forEach(tab => {
+    tab.addEventListener("click", () => {
+      const tabKey = tab.dataset.tab;
+      setFilter(tabKey);
+    });
+  });
+
+  // Search input
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("input", (e) => {
+    searchQuery = e.target.value;
+    renderTable();
+    renderActionPanel();
+  });
+
+  // CSV and Reset buttons
+  document.getElementById("btnDownloadCsv").addEventListener("click", downloadCsv);
+  document.getElementById("btnResetDemo").addEventListener("click", resetDemo);
+
+  // Modal close
+  document.getElementById("btnCloseModal").addEventListener("click", () => {
+    document.getElementById("slotSearchModal").style.display = "none";
+  });
+  document.getElementById("slotSearchModal").addEventListener("click", (e) => {
+    if (e.target.id === "slotSearchModal") {
+      document.getElementById("slotSearchModal").style.display = "none";
+    }
+  });
+
+  function setFilter(filter) {
+    currentFilter = filter;
+
+    // Update metric cards active state
+    document.querySelectorAll(".metric-card").forEach(c => {
+      c.classList.toggle("active", c.dataset.filter === filter);
+    });
+
+    // Update tab active state
+    document.querySelectorAll(".tab-btn").forEach(t => {
+      t.classList.toggle("active", t.dataset.tab === filter);
+    });
+
+    // Update Title
+    const titles = {
+      active: "Active Follow-up Queue",
+      review: "Needs Review (Missing CRM Data)",
+      progress: "In Progress / Contact Cooldown",
+      booked: "Demo Booked (Confirmed)",
+      inactive: "Declined / Inactive Records",
+      all: "All Leads"
+    };
+    document.getElementById("currentViewTitle").textContent = titles[filter] || "Follow-up Queue";
+
+    renderTable();
+    renderActionPanel();
+  }
+
+  // Initial render
+  updateMetricCounts();
+  renderTable();
+  renderActionPanel();
+});
+</script>
+
+</body>
+</html>
