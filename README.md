@@ -1,4 +1,4 @@
- · Booking Follow-up Tracker
+ ## Booking Follow-up Tracker
 
 **Component Prototype: Daily Booking-Assistance Follow-up for Recent Unbooked Leads**  
 *Single-page, self-contained HTML application with zero external dependencies.*
